@@ -1,5 +1,10 @@
 """Uji unit untuk modul prediksi (inferensi model)."""
+import sys
+from pathlib import Path
+
 import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.karhutla.config import MODEL_PATH
 from src.karhutla.predict import load_model, predict, predict_one
