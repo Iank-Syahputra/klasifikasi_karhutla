@@ -1,8 +1,8 @@
 # Klasifikasi Karhutla — Deteksi Kebakaran Hutan & Lahan
 
 Proyek Machine Learning untuk mengklasifikasikan potensi kebakaran hutan dan lahan
-(Karhutla) berdasarkan data meteorologi harian. Model ini dirancang sebagai fondasi
-untuk aplikasi **Early Warning System (EWS)** berbasis website.
+(Karhutla) berdasarkan data meteorologi harian, **lengkap dengan aplikasi website
+Early Warning System (EWS)** yang menampilkan dashboard prediksi real-time.
 
 > **Kenapa penting?** Karhutla berulang terjadi tiap musim kemarau dan berdampak
 > langsung pada kesehatan, ekonomi, hingga iklim. Deteksi dini yang akurat dapat
@@ -41,6 +41,16 @@ klasifikasi_karhutla/
 │   ├── config.py             # Konfigurasi terpusat (path, fitur, threshold)
 │   ├── data.py               # Pipeline pembersihan data
 │   └── predict.py            # Memuat model & melakukan prediksi
+├── api/                      # Backend FastAPI (Early Warning System)
+│   ├── app/
+│   │   ├── main.py           # Routes API + serve frontend di "/"
+│   │   ├── schemas.py        # Validasi input/output (Pydantic)
+│   │   ├── database.py       # Riwayat prediksi (SQLite)
+│   │   └── service.py        # Gabungkan model ML + penyimpanan riwayat
+│   └── ...
+├── web/                      # Frontend dashboard EWS (HTML/CSS/JS + Chart.js)
+│   ├── index.html
+│   └── assets/
 ├── data/raw/                 # Dataset mentah (algerian_forest_fires.xlsx)
 ├── models/
 │   └── xgboost_tuned.joblib  # Artefak model terbaik (siap dipakai, tanpa retrain)
@@ -57,6 +67,8 @@ Ringkasan per folder:
 |--------|-----|-------------|
 | `notebooks/` | Eksplorasi & eksperimen lengkap | yang ingin memahami analisis |
 | `src/karhutla/` | Kode produksi yang bisa di-import | yang ingin memakai/integrasi |
+| `api/` | Backend FastAPI (predict, riwayat, stats) | aplikasi / deployment |
+| `web/` | Dashboard EWS (form + grafik + riwayat) | pengguna website |
 | `data/` | Bahan mentah dataset | reproduksibilitas |
 | `models/` | Model terlatih (artefak) | aplikasi / deployment |
 | `docs/` | Laporan & kartu model | stakeholder & reviewer |
@@ -115,6 +127,51 @@ Artefak model disimpan di `models/xgboost_tuned.joblib` — dibuat oleh cell ter
 ("Export Model untuk Deployment") di notebook, sehingga prediksi **tanpa retrain**.
 
 ---
+
+## Aplikasi Website — Early Warning System (EWS)
+
+Website dashboard untuk mensimulasikan sistem peringatan dini: isi data cuaca,
+dapatkan status risiko, dan pantau riwayat prediksi dalam grafik.
+
+### Fitur
+
+- **Form input cuaca** (Temperature, Ws, Rain, RH) dengan validasi.
+- **Hasil prediksi real-time**: badge `fire`/`not fire`, probabilitas, dan threshold 0.21.
+- **Riwayat prediksi** tersimpan (SQLite) + tabel riwayat.
+- **Dashboard**: kartu ringkasan, grafik distribusi status, dan tren probabilitas.
+
+### Menjalankan aplikasi
+
+```bash
+# dari akar repositori
+uvicorn api.app.main:app --reload
+```
+
+Buka **http://localhost:8000** untuk dashboard. Dokumentasi API interaktif:
+**http://localhost:8000/docs** (otomatis disediakan FastAPI).
+
+### Endpoint API
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| `GET` | `/health` | Status server |
+| `POST` | `/api/v1/predict` | Prediksi kebakaran dari data cuaca (`{temperature, ws, rain, rh}`) |
+| `GET` | `/api/v1/predictions?limit=50` | Riwayat prediksi terbaru |
+| `GET` | `/api/v1/stats` | Ringkasan statistik riwayat |
+
+Contoh request:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/predict \
+  -H "Content-Type: application/json" \
+  -d '{"temperature": 34, "ws": 20, "rain": 0.0, "rh": 40}'
+```
+
+```json
+{"fire": true, "label": "fire", "probability": 0.8707, "threshold": 0.21}
+```
+
+--->
 
 ## Contoh Penggunaan `src`
 
