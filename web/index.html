@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karhutla Early Warning System</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>Karhutla Early Warning System</h1>
+        <p>Deteksi potensi kebakaran hutan &amp; lahan dari data meteorologi harian</p>
+      </div>
+      <span id="health-badge" class="badge badge-idle">menghubungkan...</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="grid grid-top">
+      <div class="card">
+        <h2>Input Data Cuaca</h2>
+        <form id="predict-form">
+          <label for="temperature">Suhu (°C)</label>
+          <input type="number" id="temperature" name="temperature" step="0.1" min="-20" max="60" value="34" required />
+
+          <label for="ws">Kecepatan Angin (km/jam)</label>
+          <input type="number" id="ws" name="ws" step="0.1" min="0" max="200" value="20" required />
+
+          <label for="rain">Curah Hujan (mm)</label>
+          <input type="number" id="rain" name="rain" step="0.1" min="0" max="300" value="0" required />
+
+          <label for="rh">Kelembaban Relatif (%)</label>
+          <input type="number" id="rh" name="rh" step="0.1" min="0" max="100" value="40" required />
+
+          <button type="submit" id="predict-btn">Prediksi Risiko</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Hasil Prediksi</h2>
+        <div id="result-placeholder" class="result-empty">
+          Masukkan data cuaca lalu klik <strong>Prediksi Risiko</strong>.
+        </div>
+        <div id="result" class="result hidden">
+          <div id="result-badge" class="badge-result">-</div>
+          <div class="result-prob">
+            <div class="prob-label">
+              <span>Probabilitas Kebakaran</span>
+              <strong id="result-prob">0%</strong>
+            </div>
+            <div class="prob-bar"><div id="prob-fill" class="prob-fill"></div></div>
+            <p class="prob-note">Threshold: <span id="result-threshold">0.21</span> —
+              hasil <span id="result-state"></span> karena probabilitasnya di atas ambang.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-stats">
+      <div class="stat-card"><span class="stat-value" id="stat-total">0</span><span class="stat-label">Total Prediksi</span></div>
+      <div class="stat-card stat-fire"><span class="stat-value" id="stat-fire">0</span><span class="stat-label">Fire</span></div>
+      <div class="stat-card stat-safe"><span class="stat-value" id="stat-safe">0</span><span class="stat-label">Not Fire</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-avg">0%</span><span class="stat-label">Rata-rata Probabilitas</span></div>
+    </section>
+
+    <section class="grid grid-charts">
+      <div class="card">
+        <h2>Distribusi Status</h2>
+        <div class="chart-box"><canvas id="chart-pie"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Tren Probabilitas (Riwayat Terakhir)</h2>
+        <div class="chart-box"><canvas id="chart-line"></canvas></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Riwayat Prediksi</h2>
+      <div class="table-wrap">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Waktu</th>
+              <th>Suhu</th>
+              <th>Angin</th>
+              <th>Hujan</th>
+              <th>RH</th>
+              <th>Probabilitas</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Model: XGBoost (tuned) &middot; FITUR: Temperature, Ws, Rain, RH &middot; Threshold 0.21</p>
+    <p><a href="/docs">Dokumentasi API</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
