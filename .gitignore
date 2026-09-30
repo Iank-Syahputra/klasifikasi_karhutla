@@ -31,3 +31,9 @@ logs/
 .pytest_cache/
 .mypy_cache/
 *.bak
+
+# ===== Database aplikasi (lokasi) =====
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm

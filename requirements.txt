@@ -19,3 +19,8 @@ nbconvert==7.17.1
 
 # Testing
 pytest==9.1.1
+
+# ===== API / Website (Early Warning System) =====
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+httpx==0.28.1
