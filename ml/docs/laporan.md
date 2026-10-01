@@ -87,7 +87,7 @@ Threshold optimal **0.21**:
 
 ## 9. Rekomendasi Selanjutnya
 
-- **Integrasi API/website:** serving model via `src/karhutla/predict.py` untuk
+- **Integrasi API/website:** serving model via `ml/src/karhutla/predict.py` untuk
   membangun antarmuka Early Warning System.
 - **Validasi data lokal Indonesia** (karakteristik gambut/tanah berbeda).
 - **Eksperimen fitur tambahan** (misal indeks kekeringan lokal, data lahan).

@@ -5,20 +5,14 @@ agar mudah diubah tanpa menyentuh logika yang lain.
 """
 from pathlib import Path
 
-
-def get_repo_root() -> Path:
-    """Deteksi akar repositori (folder yang berisi folder ``data/``).
-
-    Bekerja dari direktori mana pun di dalam tree repositori.
-    """
-    root = Path.cwd()
-    while not (root / "data").is_dir():
-        root = root.parent
-    return root
+# Akar repositori = 3 tingkat di atas paket (ml/src/karhutla/config.py),
+# dihitung relatif-paket sehingga kokoh dari direktori mana pun dijalankan.
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+ML_ROOT = PROJECT_ROOT / "ml"
 
 
-DATA_PATH = get_repo_root() / "data" / "raw" / "algerian_forest_fires.xlsx"
-MODEL_PATH = get_repo_root() / "models" / "xgboost_tuned.joblib"
+DATA_PATH = ML_ROOT / "data" / "raw" / "algerian_forest_fires.xlsx"
+MODEL_PATH = ML_ROOT / "models" / "xgboost_tuned.joblib"
 
 # Fitur meteorologi dasar yang digunakan untuk prediksi
 FEATURES = ["Temperature", "Ws", "Rain", "RH"]

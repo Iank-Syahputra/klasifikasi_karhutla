@@ -32,8 +32,8 @@ logs/
 .mypy_cache/
 *.bak
 
-# ===== Database aplikasi (lokasi) =====
-data/*.db
-data/*.db-journal
-data/*.db-wal
-data/*.db-shm
+# ===== Database aplikasi (runtime, dibuat oleh backend) =====
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm

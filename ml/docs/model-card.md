@@ -89,6 +89,6 @@ predict_one({"Temperature": 34, "Ws": 20, "Rain": 0.0, "RH": 40})
 
 ## 8. Reproduksibilitas
 
-- Semua langkah dijelaskan selangkah demi selangkah di `notebooks/karhutla.ipynb`.
+- Semua langkah dijelaskan selangkah demi selangkah di `ml/notebooks/karhutla.ipynb`.
 - `requirements.txt` mem-pin seluruh versi dependency.
-- Dataset mentah tersedia di `data/raw/`.
+- Dataset mentah tersedia di `ml/data/raw/`.

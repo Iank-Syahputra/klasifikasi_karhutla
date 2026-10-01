@@ -1,4 +1,4 @@
-.PHONY: setup notebook train test predict
+.PHONY: setup notebook train test app predict
 
 ## Setup environment: install semua dependencies
 setup:
@@ -6,16 +6,20 @@ setup:
 
 ## Buka notebook untuk eksplorasi & analisis
 notebook:
-	jupyter notebook notebooks/karhutla.ipynb
+	jupyter notebook ml/notebooks/karhutla.ipynb
 
-## Jalankan ulang seluruh notebook (menghasilkan ulang artefak model di models/)
+## Jalankan ulang seluruh notebook (menghasilkan ulang artefak model di ml/models/)
 train:
-	jupyter nbconvert --to notebook --execute --inplace notebooks/karhutla.ipynb
+	jupyter nbconvert --to notebook --execute --inplace ml/notebooks/karhutla.ipynb
 
-## Jalankan unit test
+## Jalankan unit test (ML + backend API)
 test:
-	python -m pytest tests -v
+	python -m pytest ml/tests backend/tests -v
+
+## Jalankan aplikasi website Early Warning System (buka http://localhost:8000)
+app:
+	uvicorn backend.app.main:app --reload
 
 ## Contoh prediksi cepat
 predict:
-	python -c "from src.karhutla import predict_one; print(predict_one({'Temperature': 34, 'Ws': 20, 'Rain': 0.0, 'RH': 40}))"
+	python -c "from ml.src.karhutla import predict_one; print(predict_one({'Temperature': 34, 'Ws': 20, 'Rain': 0.0, 'RH': 40}))"

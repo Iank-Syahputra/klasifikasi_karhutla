@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from src.karhutla.config import MODEL_PATH
-from src.karhutla.predict import load_model, predict, predict_one
+from ml.src.karhutla.config import MODEL_PATH
+from ml.src.karhutla.predict import load_model, predict, predict_one
 
 
 def test_model_artifact_exists():

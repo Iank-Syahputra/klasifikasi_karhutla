@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from api.app import database as db  # noqa: E402
-from api.app.main import app  # noqa: E402
+from backend.app import database as db  # noqa: E402
+from backend.app.main import app  # noqa: E402
 
 
 @pytest.fixture()

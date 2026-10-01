@@ -1,17 +1,18 @@
 """Konfigurasi aplikasi API Early Warning System.
 
-Memanfaatkan konfigurasi paket ML (``src.karhutla.config``) agar path model
+Memanfaatkan konfigurasi paket ML (``ml.src.karhutla.config``) agar path model
 dan lokasi repositori konsisten. Path database dapat di-override lewat
 variabel lingkungan ``KARHUTLA_DB_PATH`` (berguna untuk test/isolasi).
 """
 import os
+from pathlib import Path
 
-from src.karhutla.config import MODEL_PATH, THRESHOLD, get_repo_root
+from ml.src.karhutla.config import MODEL_PATH, THRESHOLD
 
-REPO_ROOT = get_repo_root()
-WEB_DIR = REPO_ROOT / "web"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+WEB_DIR = PROJECT_ROOT / "frontend"
 
-DEFAULT_DB_PATH = REPO_ROOT / "data" / "predictions.db"
+DEFAULT_DB_PATH = PROJECT_ROOT / "backend" / "data" / "predictions.db"
 DB_PATH = os.getenv("KARHUTLA_DB_PATH", str(DEFAULT_DB_PATH))
 
 APP_NAME = "Karhutla Early Warning System"

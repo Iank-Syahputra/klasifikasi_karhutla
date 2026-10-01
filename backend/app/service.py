@@ -1,5 +1,5 @@
 """Lapisan bisnis: menggabungkan model ML dan penyimpanan riwayat."""
-from src.karhutla import load_model, predict_one
+from ml.src.karhutla import load_model, predict_one
 
 from . import database as db
 from .schemas import PredictionInput, PredictionOutput

@@ -2,7 +2,7 @@
 
 ## `xgboost_tuned.joblib`
 
-Artefak model terbaik yang dihasilkan oleh `notebooks/karhutla.ipynb`
+Artefak model terbaik yang dihasilkan oleh `ml/notebooks/karhutla.ipynb`
 (cell **"Export Model untuk Deployment"**).
 
 Isi file (dict yang di-*dump* dengan `joblib`):
@@ -20,16 +20,16 @@ Isi file (dict yang di-*dump* dengan `joblib`):
 Cara memuat dan memakai:
 
 ```python
-from src.karhutla import load_model, predict_one
+from ml.src.karhutla import load_model, predict_one
 
-meta = load_model()                      # default: models/xgboost_tuned.joblib
+meta = load_model()                      # default: ml/models/xgboost_tuned.joblib
 hasil = predict_one({"Temperature": 34, "Ws": 20, "Rain": 0.0, "RH": 40}, model=meta)
 ```
 
 Cara membuat ulang artefak ini (langkah resmi, bukan di-download):
 
 ```bash
-jupyter nbconvert --to notebook --execute --inplace notebooks/karhutla.ipynb
+jupyter nbconvert --to notebook --execute --inplace ml/notebooks/karhutla.ipynb
 ```
 
 Model dilatih pada data kehutanan Algeria (4 fitur meteorologi dasar). Detail &

@@ -33,46 +33,49 @@ Early Warning System (EWS)** yang menampilkan dashboard prediksi real-time.
 
 ## Struktur Repository
 
+Repo diorganisasikan ke dalam **3 folder utama** agar mudah dipahami siapa pun:
+
+- **`ml/`** — otak proyek (analisis, model, dataset).
+- **`backend/`** — API (FastAPI) yang memakai model untuk melayani prediksi.
+- **`frontend/`** — tampilan website dashboard (HTML/CSS/JS) yang memanggil backend.
+
 ```
 klasifikasi_karhutla/
-├── notebooks/
-│   └── karhutla.ipynb        # EDA → cleaning → modeling → tuning (hasil lengkap)
-├── src/karhutla/             # Kode Python yang bisa di-import & diuji
-│   ├── config.py             # Konfigurasi terpusat (path, fitur, threshold)
-│   ├── data.py               # Pipeline pembersihan data
-│   └── predict.py            # Memuat model & melakukan prediksi
-├── api/                      # Backend FastAPI (Early Warning System)
+├── ml/                        # ======= MACHINE LEARNING =======
+│   ├── notebooks/
+│   │   └── karhutla.ipynb     # EDA → cleaning → modeling → tuning (hasil lengkap)
+│   ├── src/karhutla/          # Kode Python yang bisa di-import & diuji
+│   │   ├── config.py          # Konfigurasi terpusat (path, fitur, threshold)
+│   │   ├── data.py            # Pipeline pembersihan data
+│   │   └── predict.py         # Memuat model & melakukan prediksi
+│   ├── models/
+│   │   └── xgboost_tuned.joblib  # Artefak model terbaik (tanpa retrain)
+│   ├── data/raw/
+│   │   └── algerian_forest_fires.xlsx
+│   ├── docs/                  # Laporan, model card, temuan EDA
+│   └── tests/                 # Unit test ML (pytest)
+├── backend/                   # ======= BACKEND (API) =======
 │   ├── app/
-│   │   ├── main.py           # Routes API + serve frontend di "/"
-│   │   ├── schemas.py        # Validasi input/output (Pydantic)
-│   │   ├── database.py       # Riwayat prediksi (SQLite)
-│   │   └── service.py        # Gabungkan model ML + penyimpanan riwayat
-│   └── ...
-├── web/                      # Frontend dashboard EWS (HTML/CSS/JS + Chart.js)
+│   │   ├── main.py            # Routes API + serve frontend di "/"
+│   │   ├── schemas.py         # Validasi input/output (Pydantic)
+│   │   ├── database.py        # Riwayat prediksi (SQLite)
+│   │   ├── service.py         # Gabungkan model ML + penyimpanan riwayat
+│   │   └── config.py          # Path frontend & database
+│   ├── data/                  # Database runtime (predictions.db, gitignored)
+│   └── tests/                 # Unit test API (pytest)
+├── frontend/                  # ======= FRONTEND (DASHBOARD) =======
 │   ├── index.html
 │   └── assets/
-├── data/raw/                 # Dataset mentah (algerian_forest_fires.xlsx)
-├── models/
-│   └── xgboost_tuned.joblib  # Artefak model terbaik (siap dipakai, tanpa retrain)
-├── docs/                     # Laporan, model card, temuan EDA
-├── tests/                    # Unit test (pytest)
-├── requirements.txt          # Dependencies (versi di-pin)
-├── Makefile                  # Perintah umum
-└── README.md
+│       ├── style.css
+│       └── app.js             # panggil API + render grafik (Chart.js)
+├── conftest.py · Makefile · requirements.txt · README.md · LICENSE · .gitignore
 ```
 
-Ringkasan per folder:
-
-| Folder | Isi | Untuk siapa |
+| Bagian | Isi | Untuk siapa |
 |--------|-----|-------------|
-| `notebooks/` | Eksplorasi & eksperimen lengkap | yang ingin memahami analisis |
-| `src/karhutla/` | Kode produksi yang bisa di-import | yang ingin memakai/integrasi |
-| `api/` | Backend FastAPI (predict, riwayat, stats) | aplikasi / deployment |
-| `web/` | Dashboard EWS (form + grafik + riwayat) | pengguna website |
-| `data/` | Bahan mentah dataset | reproduksibilitas |
-| `models/` | Model terlatih (artefak) | aplikasi / deployment |
-| `docs/` | Laporan & kartu model | stakeholder & reviewer |
-| `tests/` | Pengaman kualitas kode | developer |
+| `ml/` | Notebook, kode ML, model, dataset, laporan | yang ingin memahami/memakai model |
+| `backend/` | FastAPI: predict, riwayat, stats | aplikasi / deployment API |
+| `frontend/` | Dashboard EWS (form + grafik + riwayat) | pengguna website |
 
 ---
 
@@ -94,14 +97,14 @@ pip install -r requirements.txt
 ### 2. Lihat notebook (analisis lengkap)
 
 ```bash
-jupyter notebook notebooks/karhutla.ipynb
+jupyter notebook ml/notebooks/karhutla.ipynb
 ```
 
 Notebook sudah berisi **seluruh hasil output** (grafik & angka) sehingga bisa langsung
 dibaca tanpa menjalankan ulang. Untuk memproduksi ulang semua hasil:
 
 ```bash
-jupyter nbconvert --to notebook --execute --inplace notebooks/karhutla.ipynb
+jupyter nbconvert --to notebook --execute --inplace ml/notebooks/karhutla.ipynb
 ```
 
 > Notebook berjalan dari direktori mana pun berkat deteksi akar repositori otomatis.
@@ -109,13 +112,14 @@ jupyter nbconvert --to notebook --execute --inplace notebooks/karhutla.ipynb
 ### 3. Jalankan unit test
 
 ```bash
-python -m pytest tests -v
+python -m pytest ml/tests backend/tests -v
 ```
 
 ### 4. Coba prediksi langsung
 
 ```python
-from src.karhutla import predict_one
+# jalankan dari akar repositori (ml/ harus ada di sys.path)
+from ml.src.karhutla import predict_one
 
 # Input: Temperature (°C), Ws (km/h), Rain (mm), RH (%)
 hasil = predict_one({"Temperature": 34, "Ws": 20, "Rain": 0.0, "RH": 40})
@@ -123,7 +127,7 @@ print(hasil)
 # {'fire': True, 'label': 'fire', 'probability': 0.8707, 'threshold': 0.21}
 ```
 
-Artefak model disimpan di `models/xgboost_tuned.joblib` — dibuat oleh cell terakhir
+Artefak model disimpan di `ml/models/xgboost_tuned.joblib` — dibuat oleh cell terakhir
 ("Export Model untuk Deployment") di notebook, sehingga prediksi **tanpa retrain**.
 
 ---
@@ -144,7 +148,7 @@ dapatkan status risiko, dan pantau riwayat prediksi dalam grafik.
 
 ```bash
 # dari akar repositori
-uvicorn api.app.main:app --reload
+uvicorn backend.app.main:app --reload
 ```
 
 Buka **http://localhost:8000** untuk dashboard. Dokumentasi API interaktif:
@@ -173,10 +177,11 @@ curl -X POST http://localhost:8000/api/v1/predict \
 
 --->
 
-## Contoh Penggunaan `src`
+## Contoh Penggunaan `ml.src.karhutla`
 
 ```python
-from src.karhutla import load_model, predict, predict_one
+# jalankan dari akar repositori
+from ml.src.karhutla import load_model, predict, predict_one
 
 model_meta = load_model()                       # muat artefak model
 hasil = predict([                               # prediksi beberapa baris
@@ -203,9 +208,9 @@ print(hasil["probabilities"])  # [0.9431, 0.0066]
 
 ## Dokumentasi Lain
 
-- [Laporan lengkap](docs/laporan.md) — narasi keseluruhan proyek.
-- [Model Card](docs/model-card.md) — spesifikasi & limitasi model.
-- [Temuan EDA](docs/temuan-eda.md) — ringkasan fakta dari explorasi data.
+- [Laporan lengkap](ml/docs/laporan.md) — narasi keseluruhan proyek.
+- [Model Card](ml/docs/model-card.md) — spesifikasi & limitasi model.
+- [Temuan EDA](ml/docs/temuan-eda.md) — ringkasan fakta dari explorasi data.
 
 ---
 

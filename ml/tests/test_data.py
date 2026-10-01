@@ -2,10 +2,10 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from src.karhutla.config import DATA_PATH
-from src.karhutla.data import clean_data, load_clean_data, load_raw_data
+from ml.src.karhutla.config import DATA_PATH
+from ml.src.karhutla.data import clean_data, load_clean_data, load_raw_data
 
 
 def test_dataset_exists():

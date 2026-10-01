@@ -1,9 +1,9 @@
 """Entry point aplikasi FastAPI Early Warning System.
 
 Menjalankan:
-    uvicorn api.app.main:app --reload
+    uvicorn backend.app.main:app --reload
 
-Frontend (``web/``) disajikan langsung oleh FastAPI di ``/``.
+Frontend (``frontend/``) disajikan langsung oleh FastAPI di ``/``.
 Dokumentasi API interaktif tersedia di ``/docs``.
 """
 from contextlib import asynccontextmanager
